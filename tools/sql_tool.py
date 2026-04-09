@@ -2,25 +2,43 @@ from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
 from typing import Type
 import logging
+import sqlite3
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
 
 class SQLToolInput(BaseModel):
-    query: str = Field(description="The SQL query to execute")
+    query: str = Field(description="The SQL query to execute on the sales database")
 
 
 class SQLTool(BaseTool):
     name: str = "sql_tool"
-    description: str = "Mock tool to execute SQL queries on a database"
+    description: str = "Execute SQL queries on the sales database. Available tables: sales, monthly_sales, product_performance, regional_performance"
     args_schema: Type[BaseModel] = SQLToolInput
+
+    def __init__(self):
+        super().__init__()
+        self._db_path = "data/sales.db"
 
     def _run(self, query: str) -> str:
         logger.info(f"Executing SQL query: {query}")
-        # Mock implementation - in real scenario, connect to DB
-        if "SELECT" in query.upper():
-            return "Mock data: [{'column1': 'value1', 'column2': 'value2'}]"
-        return "Mock SQL execution result"
+        try:
+            conn = sqlite3.connect(self._db_path)
+            df = pd.read_sql_query(query, conn)
+            conn.close()
+
+            if df.empty:
+                return "Query executed successfully. No results returned."
+
+            # Format the results nicely
+            result = f"Query Results ({len(df)} rows):\n"
+            result += df.to_string(index=False)
+            return result
+
+        except Exception as e:
+            logger.error(f"SQL query failed: {e}")
+            return f"Error executing query: {str(e)}"
 
     async def _arun(self, query: str) -> str:
         return self._run(query)
