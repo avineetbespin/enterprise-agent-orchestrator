@@ -1,20 +1,42 @@
 # Enterprise Multi-Agent Orchestrator
 
 ## 📌 Overview
-This repository demonstrates a **production-grade multi-agent orchestration framework**. Unlike simple chatbots, this system utilizes a "Manager-Worker" architecture to decompose complex business objectives into executable sub-tasks, ensuring high accuracy and auditability.
+This repository demonstrates a **production-grade multi-agent orchestration framework** using LangGraph and LangChain. Unlike simple chatbots, this system utilizes a "Supervisor" pattern to decompose complex business queries into tasks for specialized agents, ensuring autonomous problem-solving.
 
 ## 🏗️ Architectural Design
-- **Stateful Orchestration:** Built using a Graph-based state machine to manage agent transitions and memory.
-- **Specialized Personas:** Modular agent definitions for Researchers and Analysts, allowing for "Separation of Concerns."
-- **Self-Healing Logic:** (Conceptual) Designed to allow for retry loops and human-in-the-loop validation gates.
+- **Supervisor Pattern:** Central agent decomposes queries into tasks for DataAnalyst and ReportGenerator.
+- **Graph-based State Machine:** Manages transitions with Human-in-the-loop breakpoint.
+- **Tool Integration:** DataAnalyst uses SQLTool and WebSearchTool with Pydantic validation.
+- **Enterprise Features:** Structured output, logging/tracing, async execution.
 
 ### System Flow
 ```mermaid
 graph TD
-    A[User Request] --> B{Supervisor Agent}
-    B --> C[Researcher Agent]
-    C --> D[Analyst Agent]
-    D --> E[Final Strategic Report]
-    E --> F[Human Approval Gate]
+    A[User Query] --> B[Supervisor Agent]
+    B --> C[Decompose into Tasks]
+    C --> D{DataAnalyst}
+    D --> E[Analysis Results]
+    E --> F{ReportGenerator}
+    F --> G[Report]
+    G --> H[Human Approval]
+    H --> I[Final Output]
+```
+
+## 🚀 Quick Start
+1. Install dependencies: `pip install -r requirements.txt`
+2. Set up environment: `cp .env.example .env` and add your OpenAI API key
+3. Run: `python main.py`
+
+## 📁 Structure
+- `/agents`: Supervisor, DataAnalyst, ReportGenerator agents
+- `/tools`: SQLTool, WebSearchTool
+- `/schema`: Pydantic models
+- `/tests`: Pytest test suite
+- `main.py`: Async entry point
+- `pyproject.toml`: Modern Python packaging
+- `Dockerfile`: Containerization
+
+## 🧪 Testing
+Run tests: `pytest`
 
 
