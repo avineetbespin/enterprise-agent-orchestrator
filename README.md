@@ -17,12 +17,12 @@ graph TD
     D --> E[Final Strategic Report]
     E --> F[Human Approval Gate]
 
-🚀 Key Enterprise Features
+## Key Enterprise Features
 Tool-Use (Function Calling): Agents are equipped with specific tools (Search, DB Query) to reduce hallucinations.
 Scalability: Designed to be containerized (Docker) and deployed via Kubernetes/GKE.
 Observability: Integrated hooks for tracing agent decision-making paths.
 
-🛠️ Setup
+## Setup
 Clone the repo: git clone ...
 Install dependencies: pip install -r requirements.txt
 Configure .env with your LLM API keys.
